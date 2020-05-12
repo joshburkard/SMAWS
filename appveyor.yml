@@ -1,0 +1,38 @@
+version: 0.1.{build}
+pull_requests:
+  do_not_increment_build_number: true
+image:
+- Visual Studio 2015
+- Visual Studio 2019
+- Ubuntu1604
+environment:
+  PSgalleryKey:
+    secure: PClfXUdXtvsnO++whaWSCefsKCEceG7DCd3YeAqShTVCKU+UPjLdokXp8fhjDsjr
+  GitHubKey:
+    secure: PQ85DCcOehIASWpNADzY/g265yUvU19SH+CmV+utVteTYY5BVZyqSqr1Og+fPxFm
+install:
+- pwsh: .\CI\10_AppVeyor_Install.ps1
+build_script:
+- pwsh: write-host "Skipping build"
+test_script:
+- pwsh: .\CI\11_AppVeyor_Test.ps1
+deploy_script:
+- ps: "# Publish the new version to the PowerShell Gallery\n    Try \n    {\n        # Build a splat containing the required details and make sure to Stop for errors which will trigger the catch\n        $PM = @{\n            Path        = '.\\Rubrik'\n            NuGetApiKey = $env:PSgalleryKey\n            ErrorAction = 'Stop'\n        }\n        Publish-Module @PM\n        Write-Host \"Rubrik PowerShell Module version $newVersion published to the PowerShell Gallery.\" -ForegroundColor Cyan\n    }\n    Catch \n    {\n        # Sad panda; it broke\n        Write-Warning \"Publishing update $newVersion to the PowerShell Gallery failed.\"\n        throw $_\n    }"
+
+notifications:
+- provider: Email
+  to:
+  - josh@burkard.it
+  on_build_success: true
+  on_build_failure: true
+  on_build_status_changed: true
+
+# Ignore testing a commit if only the README.md file changed
+# Or if various strings are found in the commit message: updated readme, update readme, update docs, update version, update appveyor
+skip_commits:
+  files:
+    - docs/*
+    - README.MD
+    - CHANGELOG.md
+    - mkdocs.yml
+  message: /updated readme.*|update readme.*s|update docs.*|update version.*|update appveyor.*/

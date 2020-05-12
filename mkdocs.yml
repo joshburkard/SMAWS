@@ -1,0 +1,6 @@
+site_name: SMAWS
+theme:
+    name: readthedocs
+    highlightjs: true
+    hljs_languages:
+        - powershell

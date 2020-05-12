@@ -1,0 +1,14 @@
+﻿{
+    "ModuleName":  "SMAWS",
+    "ModuleVersion":  "0.1.12",
+    "ModuleDescription":  "allows to manage System Center Service Management AUtomation (SMA) through web service",
+    "ModuleAuthor":  "Josh Burkard",
+    "ModuleCompany":  "Josh Burkard",
+    "ModulePrefix":  "SMAWS",
+    "Tags":  [
+                 "SMA",
+                 "SystemCenter",
+                 "Service Management Automation"
+             ],
+    "ProjectUri":  "https://github.com/joshburkard/SMAWS"
+}
