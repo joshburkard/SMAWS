@@ -69,10 +69,13 @@ function Get-SMAWSJobStatus {
 
         $Output = @()
         foreach ( $Result in $Results ) {
+            $StreamTypeName = try { $Result.content.properties.StreamTypeName } catch { $null }
+            $StreamTime = try { ( Get-Date $Result.content.properties.StreamTime.InnerText ) } catch { $null }
+            $StreamText = try { $Result.content.properties.StreamText.InnerText.Trim() } catch { $null }
             $Output += New-Object -TypeName PSObject -Property @{
-                StreamTypeName = $Result.content.properties.StreamTypeName
-                StreamTime     = ( Get-Date $Result.content.properties.StreamTime.InnerText )
-                StreamText     = $Result.content.properties.StreamText.InnerText.Trim()
+                StreamTypeName = $StreamTypeName
+                StreamTime     = $StreamTime
+                StreamText     = $StreamText
             }
         }
 

@@ -1,5 +1,5 @@
 ﻿<#
-    Generated at 03/14/2020 20:39:31 by Josh Burkard
+    Generated at 12/16/2021 19:35:32 by Josh Burkard
 #>
 #region namespace SMAWS
 function Get-SMAWSEntries {
@@ -458,10 +458,13 @@ function Get-SMAWSJobStatus {
 
         $Output = @()
         foreach ( $Result in $Results ) {
+            $StreamTypeName = try { $Result.content.properties.StreamTypeName } catch { $null }
+            $StreamTime = try { ( Get-Date $Result.content.properties.StreamTime.InnerText ) } catch { $null }
+            $StreamText = try { $Result.content.properties.StreamText.InnerText.Trim() } catch { $null }
             $Output += New-Object -TypeName PSObject -Property @{
-                StreamTypeName = $Result.content.properties.StreamTypeName
-                StreamTime     = ( Get-Date $Result.content.properties.StreamTime.InnerText )
-                StreamText     = $Result.content.properties.StreamText.InnerText.Trim()
+                StreamTypeName = $StreamTypeName
+                StreamTime     = $StreamTime
+                StreamText     = $StreamText
             }
         }
 
@@ -1059,6 +1062,7 @@ $Body = @"
                 $startDate = Get-Date
                 do {
                     $JobStatus = Get-SMAWSJobStatus @CheckParams
+                    Start-Sleep -Seconds 1
                 } while ( ( $JobStatus.Status -ne 'Completed' ) -and ( $JobStatus.Status -ne 'Failed' ) -and ( $startDate.AddSeconds( $timeout ) -gt (Get-Date) ) )
                 return $JobStatus
             }
